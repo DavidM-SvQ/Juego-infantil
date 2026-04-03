@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Galería de Banderas 🚩</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        
+        body { margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; background-color: #e8eaf6; }
+
+        /* CABECERA COMPACTA UNIFICADA */
+        .header-juego { 
+            background: white; 
+            padding: 15px 30px; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            border-bottom: 6px solid #3f51b5; 
+        }
+        .header-juego h1 { color: #1a237e; margin: 0; font-size: 1.8rem; }
+        
+        .btn-volver { 
+            background: #546e7a; 
+            color: white !important; 
+            padding: 10px 20px; 
+            border-radius: 20px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            box-shadow: 0 4px 0 #37474f;
+            font-size: 0.9rem;
+        }
+
+        .contenedor-galeria {
+            max-width: 1000px; 
+            margin: 20px auto; 
+            background: white;
+            border-radius: 50px; 
+            padding: 30px; 
+            border: 8px solid #3f51b5;
+            box-shadow: 0 15px 0 #c5cae9;
+        }
+
+        h1.titulo { font-size: 2.2rem; color: #1a237e; margin-bottom: 10px; }
+        p.instruccion { font-size: 1.3rem; color: #3f51b5; margin-bottom: 30px; font-weight: bold; }
+
+        /* GRID DE BANDERAS */
+        .grid-banderas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .item-bandera {
+            width: 170px;
+            background: #fff;
+            border: 4px solid #eee;
+            border-radius: 25px;
+            padding: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 6px 0 #eee;
+        }
+
+        .item-bandera:hover { transform: scale(1.1); border-color: #3f51b5; box-shadow: 0 10px 20px rgba(63, 81, 181, 0.2); z-index: 10; }
+        .item-bandera:active { transform: scale(0.95); }
+
+        .item-bandera img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .item-bandera span {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .item-bandera.activo { border-color: #4caf50; background: #e8f5e9; box-shadow: 0 6px 0 #a5d6a7; }
+    </style>
+</head>
+
+<body class="isla-tema bg-geografia">
+
+    <div class="header-juego">
+        <a href="geografia-menu.html" class="btn btn-volver">⬅ MENÚ GEOGRAFÍA</a>
+        <h1>🚩 El Mundo de las Banderas</h1>
+    </div>
+
+    <div class="contenedor-galeria">
+        <h1 class="titulo">¡Toca una bandera para escuchar su nombre!</h1>
+        <p class="instruccion">Aprende los países del mundo 🌍</p>
+        
+        <div id="galeria" class="grid-banderas">
+            <!-- Las banderas se cargarán aquí automáticamente -->
+        </div>
+    </div>
+
+    <script>
+        const listaBanderas = [
+            { n: "España", id: "es" }, { n: "Francia", id: "fr" }, { n: "Portugal", id: "pt" },
+            { n: "Italia", id: "it" }, { n: "Alemania", id: "de" }, { n: "Reino Unido", id: "gb" },
+            { n: "Grecia", id: "gr" }, { n: "Estados Unidos", id: "us" }, { n: "Canadá", id: "ca" },
+            { n: "México", id: "mx" }, { n: "Brasil", id: "br" }, { n: "Argentina", id: "ar" },
+            { n: "Japón", id: "jp" }, { n: "China", id: "cn" }, { n: "Australia", id: "au" },
+            { n: "Marruecos", id: "ma" }, { n: "Egipto", id: "eg" }, { n: "Rusia", id: "ru" },
+            { n: "Suiza", id: "ch" }, { n: "Bélgica", id: "be" }, { n: "Holanda", id: "nl" },
+            { n: "Corea del Sur", id: "kr" }, { n: "India", id: "in" }, { n: "Turquía", id: "tr" },
+            { n: "Andorra", id: "ad" }
+        ];
+
+        function hablar(t) {
+            window.speechSynthesis.cancel();
+            const m = new SpeechSynthesisUtterance(t);
+            m.lang = 'es-ES'; window.speechSynthesis.speak(m);
+        }
+
+        function cargarGaleria() {
+            const area = document.getElementById('galeria');
+            area.innerHTML = "";
+
+            listaBanderas.forEach(b => {
+                const card = document.createElement('div');
+                card.className = "item-bandera";
+                card.innerHTML = `
+                    <img src="https://flagcdn.com/w320/${b.id}.png" alt="${b.n}">
+                    <span>${b.n}</span>
+                `;
+                
+                card.onclick = () => {
+                    document.querySelectorAll('.item-bandera').forEach(c => c.classList.remove('activo'));
+                    card.classList.add('activo');
+                    hablar(b.n);
+                };
+                
+                area.appendChild(card);
+            });
+        }
+
+        window.onload = () => {
+            cargarGaleria();
+            hablar("¡Bienvenida al museo de banderas! Toca las banderas para aprender sus nombres.");
+        };
+    </script>
+</body>
+</html>
