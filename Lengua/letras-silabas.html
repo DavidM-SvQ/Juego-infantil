@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Juego de Sílabas 👏</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../diccionario.js"></script>
+    <script src="../progreso.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        body { margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; background-color: #f8f9fa; }
+        
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('../Recursos/Imagenes/fondo_letras.jpg') no-repeat center center fixed;
+            background-size: cover; opacity: 0.12; z-index: -1;
+        }
+
+        .header-juego { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 6px solid #FF9800; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+        .contenedor-blanco { max-width: 900px; margin: 20px auto; background: white; border-radius: 50px; padding: 30px; border: 8px solid #FF9800; box-shadow: 0 15px 0 #ffe0b2; position: relative; }
+        .btn-repetir { background: #ff9800; color: white; border: none; padding: 12px 25px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #e65100; margin-bottom: 10px; }
+        .visor-img { width: 280px; height: 220px; margin: 0 auto 15px; background: #f9f9f9; border-radius: 35px; border: 6px solid #FF9800; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        #img-dibujo { width: 85%; height: 85%; object-fit: contain; z-index: 2; position: relative; display: none; }
+        #emoji-fallback { font-size: 8rem; position: absolute; z-index: 1; }
+        .btn-silaba { background: #FF9800; color: white; border: none; padding: 15px; min-width: 85px; font-size: 3rem; border-radius: 20px; margin: 8px; cursor: pointer; box-shadow: 0 8px 0 #E65100; font-weight: bold; }
+        #celebracion { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.96); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body class="isla-tema">
+    <div id="celebracion">
+        <h1 id="emoji-ganar" style="font-size: 8rem; margin:0;">🌟</h1>
+        <h1 style="font-size: 4rem; color: #E65100;">¡MUY BIEN!</h1>
+        <button class="btn-silaba" style="background:#4caf50; box-shadow:0 6px 0 #1b5e20; padding:20px 60px; font-size:2rem;" onclick="nuevoReto()">Siguiente ⏭️</button>
+    </div>
+    <div class="header-juego">
+        <a href="letras.html" class="btn-volver">⬅ ATRÁS</a>
+        <h1 style="color: #E65100; font-size: 1.8rem; margin:0;">👏 Sílabas</h1>
+        <div style="font-size: 2.2rem; font-weight: bold; color: #FF9800;">⭐ <span id="stars-count">0</span></div>
+    </div>
+    <div class="contenedor-blanco">
+        <h2 style="font-size: 2rem; color: #E65100; margin: 0;">¿Cuántas sílabas tiene?</h2>
+        <button class="btn-repetir" onclick="repetirPalabra()">🔊 Escuchar</button>
+        <div class="visor-img"><div id="emoji-fallback">❓</div><img id="img-dibujo" src="" alt="objeto"></div>
+        <div id="botones-area"></div>
+    </div>
+    <script>
+        let estrellas = 0; let reto = {};
+        function hablar(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'es-ES'; window.speechSynthesis.speak(m); }
+        function repetirPalabra() { if(reto.n) hablar(reto.n); }
+        function nuevoReto() {
+            document.getElementById('celebracion').style.display = 'none';
+            const cats = Object.keys(DICCIONARIO_GENERAL);
+            const cat = cats[Math.floor(Math.random() * cats.length)];
+            reto = DICCIONARIO_GENERAL[cat][Math.floor(Math.random() * DICCIONARIO_GENERAL[cat].length)];
+            hablar(reto.n);
+            const imgEl = document.getElementById('img-dibujo'); const emojiEl = document.getElementById('emoji-fallback');
+            emojiEl.innerText = reto.e; emojiEl.style.opacity = "1"; imgEl.style.display = 'none';
+            imgEl.src = "https://img.icons8.com/color/250/" + reto.q + ".png";
+            imgEl.onload = () => { imgEl.style.display = 'block'; emojiEl.style.opacity = "0.05"; };
+            imgEl.onerror = () => { imgEl.style.display = 'none'; emojiEl.style.opacity = "1"; };
+            const areaBtns = document.getElementById('botones-area'); areaBtns.innerHTML = "";
+            for(let i=1; i<=5; i++) {
+                const b = document.createElement('button'); b.className = "btn-silaba"; b.innerText = i;
+                b.onclick = () => { if(i === reto.s) ganar(); else hablar("Prueba otra vez"); };
+                areaBtns.appendChild(b);
+            }
+        }
+        function ganar() {
+            estrellas++; document.getElementById('stars-count').innerText = estrellas;
+            if(window.añadirEstrellaAlCofre) añadirEstrellaAlCofre();
+            document.getElementById('emoji-ganar').innerText = reto.e;
+            document.getElementById('celebracion').style.display = 'flex'; hablar("¡Correcto!");
+        }
+        window.onload = nuevoReto;
+    </script>
+</body>
+</html>

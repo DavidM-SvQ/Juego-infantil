@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Series Lógicas 📈</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../progreso.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        body { margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; }
+        .header-juego { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 6px solid #2196F3; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+        .contenedor-blanco { max-width: 900px; margin: 20px auto; background: white; border-radius: 50px; padding: 30px; border: 8px solid #2196F3; box-shadow: 0 15px 0 #bbdefb; position: relative; }
+        
+        /* Pizarra Verde igual que en operaciones */
+        .pizarra-verde { background-color: #1b3d2f; border: 12px solid #5d4037; padding: 40px 20px; border-radius: 30px; display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; box-shadow: inset 0 0 50px #000; }
+        .burbuja-num { width: 90px; height: 90px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; color: #333; border: 5px solid #cfd8dc; font-family: 'Comic Sans MS', cursive; }
+        .burbuja-num.incognito { background: #ffeb3b; border-color: #fbc02d; color: #f57f17; animation: latido 1s infinite; }
+        @keyframes latido { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .btn-respuesta { width: 120px; height: 120px; background: white; border: 6px solid #2196F3; border-radius: 30px; font-size: 3.5rem; font-weight: bold; color: #2196F3; cursor: pointer; box-shadow: 0 8px 0 #bbdefb; transition: 0.2s; }
+    </style>
+</head>
+<body class="isla-tema bg-mates">
+    <div id="celebracion" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.96); z-index:1000; flex-direction:column; align-items:center; justify-content:center;">
+        <h1 style="font-size: 8rem; margin:0;">🌟</h1>
+        <h1 style="font-size: 4rem; color: #2196F3;">¡EXCELENTE!</h1>
+        <button class="btn-respuesta" style="width:auto; padding:0 40px; background:#4caf50; color:white; border-color:#1b5e20;" onclick="nuevaSerie()">Siguiente ⏭️</button>
+    </div>
+    <div class="header-juego">
+        <a href="mates.html" class="btn-volver">⬅ ATRÁS</a>
+        <h1 style="color: #1565c0; font-size: 1.8rem; margin:0;">📈 Series Lógicas</h1>
+        <div style="font-size: 2.2rem; font-weight: bold; color: #2196F3;">⭐ <span id="stars">0</span></div>
+    </div>
+    <div class="contenedor-blanco">
+        <h2 style="font-size: 2rem; color: #1565c0; margin-top: 0;">¿Qué número falta?</h2>
+        <div id="serie-container" class="pizarra-verde"></div>
+        <div id="opciones" style="display:flex; justify-content:center; gap:20px;"></div>
+    </div>
+    <script>
+        let estrellas = 0; let numeroCorrecto = 0;
+        function hablar(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'es-ES'; window.speechSynthesis.speak(m); }
+        function nuevaSerie() {
+            document.getElementById('celebracion').style.display = 'none';
+            const container = document.getElementById('serie-container');
+            const opcionesDiv = document.getElementById('opciones');
+            container.innerHTML = ""; opcionesDiv.innerHTML = "";
+            const patrones = [{ paso: 1, min: 1, max: 20 }, { paso: 2, min: 2, max: 30 }, { paso: 5, min: 5, max: 50 }, { paso: 10, min: 10, max: 90 }, { paso: -1, min: 10, max: 20 }];
+            const p = patrones[Math.floor(Math.random() * patrones.length)];
+            let inicio = Math.floor(Math.random() * (p.max - p.min)) + p.min;
+            let serie = []; for(let i=0; i<4; i++) { serie.push(inicio + (i * p.paso)); }
+            const indiceEscondido = Math.random() > 0.5 ? 3 : 2;
+            numeroCorrecto = serie[indiceEscondido];
+            serie.forEach((num, index) => {
+                const burbuja = document.createElement('div');
+                burbuja.className = index === indiceEscondido ? "burbuja-num incognito" : "burbuja-num";
+                burbuja.innerText = index === indiceEscondido ? "?" : num;
+                container.appendChild(burbuja);
+            });
+            let opciones = [numeroCorrecto];
+            while(opciones.length < 3) {
+                let falso = numeroCorrecto + (Math.random() > 0.5 ? p.paso : -p.paso);
+                if(falso !== numeroCorrecto && falso > 0 && !opciones.includes(falso)) opciones.push(falso);
+            }
+            opciones.sort(() => Math.random() - 0.5).forEach(opt => {
+                const btn = document.createElement('button'); btn.className = "btn-respuesta"; btn.innerText = opt;
+                btn.onclick = () => {
+                    if(opt === numeroCorrecto) {
+                        estrellas++; document.getElementById('stars').innerText = estrellas;
+                        añadirEstrellaAlCofre(); document.getElementById('celebracion').style.display = 'flex'; hablar("¡Muy bien!");
+                    } else { hablar("Casi..."); btn.style.opacity = "0.3"; }
+                };
+                opcionesDiv.appendChild(btn);
+            });
+        }
+        window.onload = nuevaSerie;
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sorteando Juego...</title>
+	<link rel="icon" type="image/png" href="../icono.png">
+	<script src="../progreso.js"></script>
+    <style>
+        body { background: #fff3e0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Quicksand', sans-serif; }
+        .dado { font-size: 8rem; animation: girar 0.5s infinite; margin-bottom: 20px; }
+        @keyframes girar { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
+        h1 { color: #FF9800; font-size: 3rem; }
+    </style>
+    <script>
+        // Lista de los 4 juegos separados
+        const juegos =[
+            "letras-silabas.html", 
+            "letras-escribir.html", 
+            "letras-mariposa.html", 
+            "letras-crucigrama.html"
+        ];
+
+        window.onload = () => {
+            // Elige un juego al azar
+            const juegoElegido = juegos[Math.floor(Math.random() * juegos.length)];
+            
+            // Le añade la contraseña "?modo=mezclado" y viaja hacia allá después de 1 segundo (para que vea el dado girar)
+            setTimeout(() => {
+                window.location.href = juegoElegido + "?modo=mezclado";
+            }, 800);
+        };
+    </script>
+</head>
+<body>
+    <div class="dado">🎲</div>
+    <h1>¡Sorteando juego sorpresa!</h1>
+</body>
+</html>

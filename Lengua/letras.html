@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Isla de las Letras</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        
+        body { margin: 0; font-family: 'Fredoka', sans-serif; background: #fff3e0; text-align: center; }
+
+        /* CABECERA COMPACTA */
+        .header-juego { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 6px solid #FF9800; }
+        .header-juego h1 { color: #FF9800; margin: 0; font-size: 1.8rem; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+
+        .islas-grid { 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            padding: 40px 20px; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+
+        .isla { 
+            background: white; 
+            border-radius: 40px; 
+            padding: 20px; 
+            width: 220px; 
+            text-decoration: none; 
+            color: #333; 
+            border: 5px solid #ddd; 
+            box-shadow: 0 10px 0 #bbb; 
+            transition: 0.3s; 
+            cursor: pointer; 
+            display: block; 
+        }
+        
+        .isla:hover { transform: translateY(-5px); box-shadow: 0 15px 0 #bbb; }
+        .isla span { font-size: 4rem; display: block; margin-bottom: 10px; }
+        .isla h2 { margin: 0; font-size: 1.6rem; }
+    </style>
+</head>
+<body class="isla-tema bg-letras">
+    <div class="header-juego">
+        <a href="../index.html" class="btn-volver">⬅ MAPA PRINCIPAL</a>
+        <h1>🔤 Isla de las Letras</h1>
+    </div>
+
+    <h2 style="color: #E65100; font-size: 2.2rem; margin-top: 40px;">¿A qué quieres jugar hoy?</h2>
+    
+    <div class="islas-grid">
+        <a href="letras-silabas.html" class="isla" style="border-color: #4caf50;"><span>👏</span><h2>Sílabas</h2></a>
+        <a href="letras-escribir.html" class="isla" style="border-color: #2196f3;"><span>⌨️</span><h2>Escribir</h2></a>
+        <a href="letras-mariposa.html" class="isla" style="border-color: #e91e63;"><span>🦋</span><h2>Mariposa</h2></a>
+        <a href="letras-crucigrama.html" class="isla" style="border-color: #ff9800;"><span>🧩</span><h2>Crucigrama</h2></a>
+        <a href="letras-mezclado.html" class="isla" style="border-color: #9c27b0;"><span>🎲</span><h2>Mezclado</h2></a>
+    </div>
+
+    <script>
+        window.onload = () => {
+            const m = new SpeechSynthesisUtterance("Bienvenida a la Isla de las Letras. Elige un juego.");
+            m.lang = 'es-ES'; 
+            window.speechSynthesis.speak(m);
+        };
+    </script>
+</body>
+</html>

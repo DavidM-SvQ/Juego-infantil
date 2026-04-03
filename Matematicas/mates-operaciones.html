@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Operaciones Gigantes ➕</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../progreso.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        :root { --p-verde: #1b3d2f; --p-madera: #5d4037; --color-c: #4caf50; --color-d: #f44336; --color-u: #2196f3; }
+        body { margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; }
+        .header-juego { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 6px solid #2196F3; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+        .contenedor-blanco { max-width: 1000px; margin: 20px auto; background: white; border-radius: 50px; padding: 30px; border: 8px solid #2196F3; box-shadow: 0 15px 0 #bbdefb; position: relative; }
+        
+        .pizarra-verde { background-color: var(--p-verde); border: 12px solid var(--p-madera); padding: 25px; border-radius: 20px; display: inline-block; box-shadow: inset 0 0 50px #000; }
+        .operacion-grid { display: grid; grid-template-columns: 70px 100px 100px 100px; gap: 10px; align-items: center; }
+        .casilla { font-size: 5rem; font-weight: bold; color: white; font-family: 'Comic Sans MS', cursive; }
+        
+        /* Colores de columna */
+        .centena { color: var(--color-c) !important; }
+        .decena { color: var(--color-d) !important; }
+        .unidad { color: var(--color-u) !important; }
+
+        .celda-input { width: 90px; height: 100px; font-size: 4.5rem; background: rgba(255,255,255,0.1); border: 3px solid rgba(255,255,255,0.2); border-radius: 15px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Comic Sans MS', cursive; }
+        .celda-input.activa { background: #fff59d; color: #333; border-color: #ffeb3b; }
+        
+        /* Llevadas en color */
+        .llevada { width: 60px !important; height: 60px !important; font-size: 2.2rem !important; border-style: dotted; margin-bottom: 10px; }
+        
+        .teclado { display: grid; grid-template-columns: repeat(3, 85px); gap: 12px; background: #37474f; padding: 20px; border-radius: 25px; }
+        .btn-tecla { width: 85px; height: 85px; background: white; border: none; border-radius: 20px; font-size: 2.5rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #cfd8dc; }
+    </style>
+</head>
+<body class="isla-tema bg-mates">
+    <div id="celebracion" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.96); z-index:1000; flex-direction:column; align-items:center; justify-content:center;">
+        <h1 style="font-size: 8rem; margin:0;">🌟</h1>
+        <h1 style="font-size: 4rem; color: #ff9800;">¡MUY BIEN!</h1>
+        <button class="btn-volver" style="background:#4caf50; padding:20px 60px; font-size:2rem;" onclick="nuevoReto()">Otra ⏭️</button>
+    </div>
+    <div class="header-juego">
+        <a href="mates.html" class="btn-volver">⬅ ATRÁS</a>
+        <h1 style="color: #1565c0; font-size: 1.8rem; margin:0;">➕ Operaciones</h1>
+        <div style="font-size: 2.2rem; font-weight: bold; color: #2196F3;">⭐ <span id="puntos">0</span></div>
+    </div>
+    <div class="contenedor-blanco">
+        <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; align-items:flex-start;">
+            <div class="pizarra-verde">
+                <div class="operacion-grid">
+                    <div></div>
+                    <div id="ll-c" class="celda-input llevada centena" onclick="sel('ll-c')"></div>
+                    <div id="ll-d" class="celda-input llevada decena" onclick="sel('ll-d')"></div>
+                    <div></div>
+                    
+                    <div></div><div id="n1-c" class="casilla centena">0</div><div id="n1-d" class="casilla decena">0</div><div id="n1-u" class="casilla unidad">0</div>
+                    <div id="signo" class="casilla" style="color:white">+</div><div id="n2-c" class="casilla centena">0</div><div id="n2-d" class="casilla decena">0</div><div id="n2-u" class="casilla unidad">0</div>
+                    <div style="grid-column: 2/5; height:6px; background:white; margin:10px 0;"></div>
+                    <div></div><div id="res-c" class="celda-input centena" onclick="sel('res-c')"></div><div id="res-d" class="celda-input decena" onclick="sel('res-d')"></div><div id="res-u" class="celda-input unidad" onclick="sel('res-u')"></div>
+                </div>
+            </div>
+            <div class="teclado">
+                <button class="btn-tecla" onclick="tec(1)">1</button><button class="btn-tecla" onclick="tec(2)">2</button><button class="btn-tecla" onclick="tec(3)">3</button>
+                <button class="btn-tecla" onclick="tec(4)">4</button><button class="btn-tecla" onclick="tec(5)">5</button><button class="btn-tecla" onclick="tec(6)">6</button>
+                <button class="btn-tecla" onclick="tec(7)">7</button><button class="btn-tecla" onclick="tec(8)">8</button><button class="btn-tecla" onclick="tec(9)">9</button>
+                <button class="btn-tecla" style="background:#ff5252; color:white; grid-column: span 2;" onclick="tec('')">⌫</button><button class="btn-tecla" onclick="tec(0)">0</button>
+                <button style="grid-column: span 3; background:#4caf50; color:white; font-size:2rem; margin-top:10px; border-radius:15px; border:none; padding:10px; cursor:pointer;" onclick="comprobar()">Comprobar ✅</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let estrellas = 0; let v = {}; let idSel = null;
+        function sel(id) { document.querySelectorAll('.celda-input').forEach(c=>c.classList.remove('activa')); idSel=id; document.getElementById(id).classList.add('activa'); }
+        function tec(n) { if(idSel) document.getElementById(idSel).innerText = n; }
+        function nuevoReto() {
+            document.getElementById('celebracion').style.display = 'none';
+            document.querySelectorAll('.celda-input').forEach(c=>c.innerText='');
+            let modo = Math.random() > 0.5 ? 'suma' : 'resta';
+            document.getElementById('signo').innerText = modo === 'suma' ? '+' : '-';
+            const vis = modo === 'suma' ? 'visible' : 'hidden';
+            document.getElementById('ll-c').style.visibility = vis; document.getElementById('ll-d').style.visibility = vis;
+            v = { u1: Math.floor(Math.random()*9), d1: Math.floor(Math.random()*9), c1: Math.floor(Math.random()*5)+1 };
+            if(modo === 'suma') { v.u2 = Math.floor(Math.random()*5)+5; v.d2 = Math.floor(Math.random()*9); v.c2 = Math.floor(Math.random()*3); }
+            else { v.u2 = Math.floor(Math.random()*(v.u1+1)); v.d2 = Math.floor(Math.random()*(v.d1+1)); v.c2 = Math.floor(Math.random()*v.c1); }
+            document.getElementById('n1-c').innerText = v.c1; document.getElementById('n1-d').innerText = v.d1; document.getElementById('n1-u').innerText = v.u1;
+            document.getElementById('n2-c').innerText = v.c2; document.getElementById('n2-d').innerText = v.d2; document.getElementById('n2-u').innerText = v.u2;
+        }
+        function comprobar() {
+            let u = parseInt(document.getElementById('res-u').innerText) || 0;
+            let d = parseInt(document.getElementById('res-d').innerText) || 0;
+            let c = parseInt(document.getElementById('res-c').innerText) || 0;
+            let n1 = v.c1*100 + v.d1*10 + v.u1; let n2 = v.c2*100 + v.d2*10 + v.u2;
+            let res = document.getElementById('signo').innerText === '+' ? n1 + n2 : n1 - n2;
+            if (u + d*10 + c*100 === res) {
+                estrellas++; document.getElementById('puntos').innerText = estrellas;
+                añadirEstrellaAlCofre(); document.getElementById('celebracion').style.display = 'flex';
+            }
+        }
+        window.onload = nuevoReto;
+    </script>
+</body>
+</html>

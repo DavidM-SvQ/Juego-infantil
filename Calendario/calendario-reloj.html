@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>La Isla del Tiempo ⏰</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <script src="../progreso.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        body { 
+            margin: 0; font-family: 'Fredoka', sans-serif; text-align: center;
+            background: #f3e5f5 url('../Recursos/Imagenes/fondo_calendario.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: -1; }
+
+        .header-juego { background: white; padding: 15px; display: flex; justify-content: space-around; align-items: center; border-bottom: 6px solid #9c27b0; }
+        .btn-volver { background: #546e7a; color: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+
+        .contenedor-blanco { max-width: 800px; margin: 20px auto; background: white; border-radius: 50px; padding: 30px; border: 8px solid #9c27b0; min-height: 600px; position: relative; box-shadow: 0 20px 0 #e1bee7; }
+
+        .reloj-externo { width: 320px; height: 320px; background: #5d4037; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .reloj-blanco { width: 280px; height: 280px; background: white; border-radius: 50%; position: relative; border: 4px solid #333; }
+        .num { position: absolute; width: 30px; height: 30px; font-size: 1.6rem; font-weight: bold; color: #333; display: flex; align-items: center; justify-content: center; }
+        
+        .h12 { top: 10px; left: 125px; } .h1 { top: 30px; left: 185px; } .h2 { top: 80px; left: 235px; } .h3 { top: 125px; left: 250px; }
+        .h4 { top: 175px; left: 235px; } .h5 { top: 225px; left: 185px; } .h6 { bottom: 10px; left: 125px; } .h7 { bottom: 30px; left: 65px; }
+        .h8 { bottom: 80px; left: 15px; } .h9 { top: 125px; left: 0px; } .h10 { top: 80px; left: 15px; } .h11 { top: 30px; left: 65px; }
+
+        .centro { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; background: #222; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .aguja { position: absolute; top: 50%; left: 50%; transform-origin: 50% 100%; border-radius: 10px; transform: translate(-50%, -100%) rotate(0deg); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .aguja-hora { width: 10px; height: 75px; background: #f44336; z-index: 5; }
+        .aguja-min { width: 6px; height: 110px; background: #2196f3; z-index: 4; }
+
+        .reloj-digital { background: #333; color: #5cff5c; font-family: monospace; font-size: 3.5rem; padding: 10px 30px; border-radius: 15px; display: inline-block; margin: 20px 0; border: 5px solid #555; }
+        .grupo-btns { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .btn-opcion { background: white; border: 3px solid #9c27b0; padding: 10px 20px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #e1bee7; }
+
+        #celebracion { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+    <div id="celebracion">
+        <h1 style="font-size: 5rem; color: #9c27b0;">¡MUY BIEN! 🌟</h1>
+        <button class="btn-opcion" style="background:#4caf50; color:white; font-size:2rem; padding:20px 50px;" onclick="nuevoReto()">Siguiente ⏭️</button>
+    </div>
+
+    <div class="header-juego">
+        <a href="calendario.html" class="btn-volver">⬅ MENÚ CALENDARIO</a>
+        <h2 id="stars" style="margin:0; font-size: 2rem; color:#9c27b0;">⭐ 0</h2>
+    </div>
+
+    <div class="contenedor-blanco">
+        <h1>¿Qué hora es?</h1>
+        <div class="reloj-externo">
+            <div class="reloj-blanco">
+                <div class="centro"></div>
+                <div id="mano-hora" class="aguja aguja-hora"></div>
+                <div id="mano-min" class="aguja aguja-min"></div>
+                <div class="num h12">12</div><div class="num h1">1</div><div class="num h2">2</div><div class="num h3">3</div>
+                <div class="num h4">4</div><div class="num h5">5</div><div class="num h6">6</div><div class="num h7">7</div>
+                <div class="num h8">8</div><div class="num h9">9</div><div class="num h10">10</div><div class="num h11">11</div>
+            </div>
+        </div>
+        <div id="digital" class="reloj-digital" style="visibility: hidden;">00:00</div>
+        <div id="botones" class="grupo-btns"></div>
+    </div>
+
+    <script>
+        let estrellas = 0; let hReto, mReto;
+        function hablar(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'es-ES'; window.speechSynthesis.speak(m); }
+        function nuevoReto() {
+            document.getElementById('celebracion').style.display = 'none';
+            document.getElementById('digital').style.visibility = 'hidden';
+            const area = document.getElementById('botones'); area.innerHTML = "";
+            hReto = Math.floor(Math.random() * 12) + 1; mReto = Math.random() > 0.5 ? 0 : 30;
+            document.getElementById('mano-min').style.transform = `translate(-50%, -100%) rotate(${mReto*6}deg)`;
+            document.getElementById('mano-hora').style.transform = `translate(-50%, -100%) rotate(${(hReto*30)+(mReto*0.5)}deg)`;
+            hablar("¿Qué hora es?");
+            let opciones = [
+                {h: hReto, m: mReto, t: mReto === 0 ? `Las ${hReto} en punto` : `Las ${hReto} y media`},
+                {h: (hReto % 12) + 1, m: 0, t: `Las ${(hReto % 12) + 1} en punto`},
+                {h: hReto, m: (mReto === 0 ? 30 : 0), t: (mReto === 0 ? `Las ${hReto} y media` : `Las ${hReto} en punto`)}
+            ];
+            opciones.sort(() => Math.random() - 0.5).forEach(opt => {
+                const btn = document.createElement('button'); btn.className = "btn-opcion"; btn.innerText = opt.t;
+                btn.onclick = () => { if(opt.h === hReto && opt.m === mReto) ganar(); else { hablar("Casi..."); btn.style.opacity = "0.3"; } };
+                area.appendChild(btn);
+            });
+        }
+        function ganar() {
+            estrellas++; document.getElementById('stars').innerText = "⭐ " + estrellas;
+            document.getElementById('digital').innerText = (hReto < 10 ? "0"+hReto : hReto) + ":" + (mReto === 0 ? "00" : "30");
+            document.getElementById('digital').style.visibility = 'visible';
+            añadirEstrellaAlCofre(); document.getElementById('celebracion').style.display = 'flex'; hablar("¡Muy bien!");
+        }
+        window.onload = nuevoReto;
+    </script>
+</body>
+</html>

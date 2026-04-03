@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Laboratorio de Ciencias 🧪</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    
+    <!-- Asegúrate de que esta ruta al CSS sea correcta -->
+    <link rel="stylesheet" href="../style.css">
+    
+    <style>
+        /* Estilos específicos para que las tarjetas se vean bien sobre el fondo */
+        body { margin: 0; font-family: 'Quicksand', sans-serif; text-align: center; }
+        .header-juego { background: rgba(255,255,255,0.9); padding: 15px; display: flex; justify-content: space-around; align-items: center; border-bottom: 6px solid #81c784; }
+        
+        .grid-ciencias { 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            padding: 30px 20px; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        
+        .subisla { 
+            background: rgba(255, 255, 255, 0.9); /* Un poco de transparencia */
+            backdrop-filter: blur(5px);
+            border-radius: 30px; 
+            padding: 20px; 
+            width: 200px; 
+            text-decoration: none; 
+            color: #2e7d32; 
+            border: 6px solid #81c784; 
+            transition: 0.3s; 
+            box-shadow: 0 10px 0 #c5e1a5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 180px;
+        }
+        
+        .subisla:hover { transform: translateY(-8px); box-shadow: 0 18px 0 #c5e1a5; background: white; }
+        .subisla span { font-size: 3.5rem; display: block; margin-bottom: 10px; }
+        .subisla h2 { margin: 0; font-size: 1.4rem; }
+        
+        h1.titulo-principal { 
+            font-size: 2.5rem; 
+            color: #1b5e20; 
+            margin-top: 30px; 
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8); /* Sombra blanca para que se lea sobre la foto */
+        }
+    </style>
+</head>
+
+<!-- AQUÍ ESTÁ EL CAMBIO: Una sola etiqueta body con sus clases -->
+<body class="isla-tema bg-ciencias">
+    
+    <div class="header-juego">
+        <a href="../index.html" class="btn btn-volver">⬅ MAPA PRINCIPAL</a>
+        <h1 style="color: #2e7d32; margin: 0; font-size: 2.2rem;">🧪 Ciencias</h1>
+    </div>
+
+    <h1 class="titulo-principal">¿A qué quieres jugar hoy?</h1>
+
+    <div class="grid-ciencias">
+        <a href="ciencia-clasificar.html" class="subisla" style="border-color: #4CAF50;"><span>📦</span><h2>Clasificar</h2></a>
+        <a href="ciencia-relacionar.html" class="subisla" style="border-color: #2196F3;"><span>🔗</span><h2>Relacionar</h2></a>
+        <a href="ciencia-ordenar.html" class="subisla" style="border-color: #FF9800;"><span>🔢</span><h2>Ordenar</h2></a>
+        <a href="ciencia-vf.html" class="subisla" style="border-color: #9C27B0;"><span>👍</span><h2>Verdadero o Falso</h2></a>
+        <a href="ciencia-intruso.html" class="subisla" style="border-color: #F44336;"><span>🕵️‍♀️</span><h2>El Intruso</h2></a>
+        <a href="ciencia-mezclado.html" class="subisla" style="border-color: #333; color: #333;"><span>🎲</span><h2>Todo Mezclado</h2></a>
+    </div>
+
+    <script>
+        window.onload = () => {
+            const m = new SpeechSynthesisUtterance("¡Bienvenida al laboratorio! Elige cómo quieres jugar hoy.");
+            m.lang = 'es-ES'; window.speechSynthesis.speak(m);
+        };
+    </script>
+</body>
+</html>

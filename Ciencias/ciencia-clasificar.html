@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clasificar 📦</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <script src="ciencia-datos.js"></script>
+    <script src="../progreso.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        body { 
+            margin: 0; font-family: 'Fredoka', sans-serif; text-align: center;
+            background: #f1f8e9 url('../Recursos/Imagenes/fondo_ciencias.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.88); z-index: -1; }
+
+        .header-juego { background: white; padding: 15px; display: flex; justify-content: space-around; align-items: center; border-bottom: 6px solid #81c784; }
+        .btn-volver { background: #546e7a; color: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+        
+        .contenedor-blanco { max-width: 1100px; margin: 20px auto; background: white; border-radius: 50px; padding: 30px; border: 8px solid #81c784; box-shadow: 0 15px 0 #c5e1a5; min-height: 550px; }
+
+        .items-clasificar { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .obj-box { 
+            width: 150px; padding: 10px; background: white; border-radius: 25px; border: 4px solid #eee; 
+            cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; box-shadow: 0 5px 0 #eee;
+        }
+        .obj-box.selected { border-color: #2196f3; transform: scale(1.1); box-shadow: 0 0 15px rgba(33, 150, 243, 0.3); }
+        
+        .img-container { width: 100%; height: 100px; background: #fdfdfd; border-radius: 15px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .img-container img { max-width: 85%; max-height: 85%; object-fit: contain; z-index: 2; }
+        .emoji-back { position: absolute; font-size: 4rem; opacity: 0.01; z-index: 1; }
+
+        .cubos-zona { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .cubo { 
+            width: 280px; min-height: 140px; background: white; border-radius: 40px; border: 6px dashed #81c784; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; font-weight: bold; font-size: 1.5rem; color: #2e7d32;
+        }
+
+        #celebracion { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+    <div id="celebracion">
+        <h1 style="font-size: 8rem; margin:0;">🌟</h1>
+        <h1 style="font-size: 4rem; color: #2e7d32;">¡ERES INCREÍBLE!</h1>
+        <button class="btn-volver" style="background:#4caf50; padding:20px 60px; font-size:2rem; box-shadow:0 8px 0 #1b5e20;" onclick="nuevoReto()">Siguiente ⏭️</button>
+    </div>
+
+    <div class="header-juego">
+        <a href="ciencias.html" class="btn-volver">⬅ MENÚ CIENCIAS</a>
+        <h1 style="color: #2e7d32; font-size: 1.8rem; margin:0;">📦 Clasificar</h1>
+        <h2 id="stars-count" style="font-size:2rem; margin:0; color:#2e7d32;">⭐ 0</h2>
+    </div>
+
+    <div class="contenedor-blanco">
+        <h2 id="instruccion" style="font-size: 2.2rem; color: #2e7d32; margin-top:0;"></h2>
+        <div id="area-juego"></div>
+    </div>
+
+    <script>
+        let estrellas = 0; let aciertos = 0; let objetivo = 0; let seleccionado = null;
+        function hablar(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'es-ES'; window.speechSynthesis.speak(m); }
+        function getImg(q) { return `https://img.icons8.com/color/200/${q}.png`; }
+
+        function nuevoReto() {
+            document.getElementById('celebracion').style.display = 'none';
+            const area = document.getElementById('area-juego');
+            area.innerHTML = ""; aciertos = 0; seleccionado = null;
+
+            const lista = BANCO_CIENCIAS["clasificar"];
+            const reto = lista[Math.floor(Math.random() * lista.length)];
+            document.getElementById('instruccion').innerText = reto.p;
+            hablar(reto.p);
+
+            objetivo = reto.items.length;
+            const itemsDiv = document.createElement('div'); itemsDiv.className = "items-clasificar";
+            const cubosDiv = document.createElement('div'); cubosDiv.className = "cubos-zona";
+
+            reto.items.sort(()=>Math.random()-0.5).forEach(it => {
+                const d = document.createElement('div'); d.className = "obj-box";
+                d.innerHTML = `<div class="img-container"><span class="emoji-back">${it.e}</span><img src="${getImg(it.q)}" onerror="this.style.display='none'; this.parentNode.querySelector('.emoji-back').style.opacity='1';"></div><b style="font-size:1.1rem">${it.n}</b>`;
+                d.onclick = () => { 
+                    document.querySelectorAll('.obj-box').forEach(b=>b.classList.remove('selected')); 
+                    d.classList.add('selected'); seleccionado = it; hablar(it.n); 
+                };
+                itemsDiv.appendChild(d);
+            });
+
+            reto.destinos.forEach(dst => {
+                const d = document.createElement('div'); d.className = "cubo";
+                d.innerHTML = `<span style="font-size:3.5rem">${dst.e}</span><b>${dst.n}</b>`;
+                d.onclick = () => {
+                    if(!seleccionado) return hablar("Toca un dibujo primero");
+                    if(seleccionado.c === dst.id) {
+                        hablar("¡Muy bien!"); 
+                        document.querySelector('.selected').style.visibility = "hidden";
+                        seleccionado = null; 
+                        if(++aciertos === objetivo) ganar();
+                    } else { 
+                        hablar("Ahí no es"); 
+                        d.style.borderColor = "red"; setTimeout(()=>d.style.borderColor = "#81c784", 500);
+                    }
+                };
+                cubosDiv.appendChild(d);
+            });
+            area.appendChild(itemsDiv); area.appendChild(cubosDiv);
+        }
+
+        function ganar() {
+            estrellas++; document.getElementById('stars-count').innerText = "⭐ " + estrellas;
+            añadirEstrellaAlCofre(); 
+            document.getElementById('celebracion').style.display = "flex"; hablar("¡Excelente!");
+        }
+        window.onload = nuevoReto;
+    </script>
+</body>
+</html>

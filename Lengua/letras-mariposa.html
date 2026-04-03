@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>La Mariposa 🦋</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../diccionario.js"></script>
+    <script src="../progreso.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        
+        body { margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; background-color: #f8f9fa; }
+
+        /* FONDO CON TRANSPARENCIA IDENTICA A LETRAS.HTML */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('../Recursos/Imagenes/fondo_letras.jpg') no-repeat center center fixed;
+            background-size: cover; opacity: 0.12; z-index: -1;
+        }
+
+        .header-juego { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 6px solid #FF9800; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+        
+        .contenedor-blanco { max-width: 950px; margin: 15px auto; background: white; border-radius: 50px; padding: 25px; border: 8px solid #FF9800; box-shadow: 0 15px 0 #ffe0b2; min-height: 80vh; position: relative; }
+        
+        .mariposa-vida { font-size: 3.2rem; transition: 0.3s; display: inline-block; margin: 0 5px; }
+        .mariposa-vida.perdida { filter: grayscale(100%); opacity: 0.2; transform: scale(0.8); }
+        
+        .huecos { font-size: 3.8rem; letter-spacing: 12px; font-weight: bold; color: #E65100; margin: 15px 0; text-shadow: 2px 2px #fff8e1; }
+        
+        .teclado { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 750px; margin: 0 auto; }
+        .tecla { 
+            width: 55px; height: 55px; border-radius: 12px; border: 3px solid #FF9800; 
+            background: white; font-weight: bold; cursor: pointer; font-size: 1.5rem; 
+            color: #E65100; box-shadow: 0 4px 0 #ffe0b2; transition: 0.1s;
+        }
+        .tecla:active { transform: translateY(3px); box-shadow: none; }
+        .tecla.used { background: #f5f5f5; color: #ccc; pointer-events: none; border-color: #eee; box-shadow: none; }
+        
+        #celebracion, #game-over { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.96); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+        .btn-next { background: #4caf50; color: white; padding: 20px 60px; font-size: 2rem; border-radius: 50px; border: none; cursor: pointer; box-shadow: 0 8px 0 #1b5e20; font-weight: bold; }
+    </style>
+</head>
+<body class="isla-tema">
+    
+    <div id="celebracion">
+        <h1 id="emoji-premio" style="font-size: 8rem; margin:0;">🌟</h1>
+        <h1 style="font-size: 4rem; color: #4caf50;">¡MUY BIEN!</h1>
+        <button class="btn-next" onclick="siguienteJuego()">Siguiente ⏭️</button>
+    </div>
+
+    <div id="game-over">
+        <h1 style="font-size: 8rem; margin:0;">😥</h1>
+        <h1 style="font-size: 3rem; color: #ad1457;">¡Se han escapado!</h1>
+        <p style="font-size: 1.5rem;">La palabra secreta era:</p>
+        <div style="font-size: 3.5rem; font-weight:bold; color:#E65100; background:#fff8e1; padding:15px 40px; border-radius:20px; border:4px dashed #FF9800; margin: 20px;" id="txt-revelado">---</div>
+        <button class="btn-next" style="background:#ff9800; box-shadow: 0 8px 0 #e65100;" onclick="nuevoReto()">Intentar otra ⏭️</button>
+    </div>
+
+    <div class="header-juego">
+        <a href="letras.html" class="btn-volver">⬅ ATRÁS</a>
+        <h1 style="color: #E65100; font-size: 1.8rem; margin:0;">🦋 Mariposa</h1>
+        <div style="font-size: 2.2rem; font-weight: bold; color: #FF9800;">⭐ <span id="stars-count">0</span></div>
+    </div>
+
+    <div class="contenedor-blanco">
+        <h2 id="instruccion" style="font-size: 2rem; color: #E65100; margin: 0;">Adivina la palabra</h2>
+        
+        <div style="margin: 10px 0;">
+            <div id="mariposas-vidas">
+                <span class="mariposa-vida" id="v-1">🦋</span>
+                <span class="mariposa-vida" id="v-2">🦋</span>
+                <span class="mariposa-vida" id="v-3">🦋</span>
+                <span class="mariposa-vida" id="v-4">🦋</span>
+                <span class="mariposa-vida" id="v-5">🦋</span>
+                <span class="mariposa-vida" id="v-6">🦋</span>
+                <span class="mariposa-vida" id="v-7">🦋</span>
+            </div>
+            <div id="texto-intentos" style="font-size:1.3rem; font-weight:bold; color:#FF9800;">¡Tienes 7 oportunidades!</div>
+        </div>
+
+        <div class="huecos" id="palabra-huecos"></div>
+        <div class="teclado" id="teclado-area"></div>
+    </div>
+
+    <script>
+        let estrellas = 0; let reto = {}; let fallos = 0; let adivinadas = [];
+        const MAX_FALLOS = 7;
+
+        function hablar(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'es-ES'; window.speechSynthesis.speak(m); }
+
+        function nuevoReto() {
+            document.getElementById('celebracion').style.display = 'none';
+            document.getElementById('game-over').style.display = 'none';
+            fallos = 0; adivinadas = [];
+            const cats = Object.keys(DICCIONARIO_GENERAL);
+            const cat = cats[Math.floor(Math.random() * cats.length)];
+            reto = DICCIONARIO_GENERAL[cat][Math.floor(Math.random() * DICCIONARIO_GENERAL[cat].length)];
+            document.getElementById('instruccion').innerText = "Adivina... (Categoría: " + cat + ")";
+            hablar("Adivina la palabra oculta de la categoría " + cat);
+            for(let i=1; i<=MAX_FALLOS; i++) { document.getElementById('v-'+i).classList.remove('perdida'); }
+            document.getElementById('texto-intentos').innerText = "¡Tienes 7 mariposas!";
+            dibujarTeclado(); actualizarPalabra();
+        }
+
+        function actualizarVidas() {
+            for(let i=1; i<=fallos; i++) { const m = document.getElementById('v-'+i); if (m) m.classList.add('perdida'); }
+            const restantes = MAX_FALLOS - fallos;
+            document.getElementById('texto-intentos').innerText = restantes > 1 ? "Te quedan " + restantes + " mariposas" : "¡Cuidado! Solo queda 1";
+            if(fallos >= MAX_FALLOS) { 
+                document.getElementById('txt-revelado').innerText = reto.n;
+                document.getElementById('game-over').style.display = 'flex'; 
+                hablar("Se han escapado todas. La palabra era " + reto.n); 
+            }
+        }
+
+        function dibujarTeclado() {
+            const area = document.getElementById('teclado-area'); area.innerHTML = "";
+            "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split('').forEach(l => {
+                const b = document.createElement('button'); b.className = "tecla"; b.innerText = l;
+                b.onclick = () => {
+                    b.classList.add('used');
+                    if(reto.n.includes(l)) { adivinadas.push(l); hablar(l); actualizarPalabra(); } 
+                    else { fallos++; hablar("No"); actualizarVidas(); }
+                };
+                area.appendChild(b);
+            });
+        }
+
+        function actualizarPalabra() {
+            const txt = reto.n.split('').map(l => adivinadas.includes(l) ? l : "_").join("");
+            document.getElementById('palabra-huecos').innerText = txt;
+            if(!txt.includes("_") && fallos < MAX_FALLOS) {
+                estrellas++; document.getElementById('stars-count').innerText = estrellas;
+                if(window.añadirEstrellaAlCofre) añadirEstrellaAlCofre();
+                document.getElementById('emoji-premio').innerText = reto.e;
+                document.getElementById('celebracion').style.display = 'flex'; hablar("¡Muy bien!");
+            }
+        }
+
+        function siguienteJuego() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('modo') === 'mezclado') { window.location.href = 'letras-mezclado.html'; } 
+            else { nuevoReto(); }
+        }
+        window.onload = nuevoReto;
+    </script>
+</body>
+</html>
