@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Enciclopedia de Instrumentos 📖</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="Instrumentos.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        
+        body { 
+            margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; 
+            background: #fce4ec; height: 100vh; display: flex; flex-direction: column;
+        }
+
+        .header-juego { background: white; padding: 15px 30px; display: flex; justify-content: space-around; align-items: center; border-bottom: 6px solid #e91e63; flex-shrink: 0; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 8px 15px; border-radius: 15px; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+
+        .main-container { display: flex; flex-direction: column; flex-grow: 1; padding: 10px; gap: 15px; overflow: hidden; }
+
+        /* VISOR SUPERIOR CON FLECHAS */
+        .visor-wrapper { 
+            position: relative; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            width: 95%; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+        }
+
+        .visor-instrumento {
+            background: white; border: 6px solid #e91e63; border-radius: 40px;
+            padding: 20px; display: flex; align-items: center; justify-content: center;
+            gap: 40px; box-shadow: 0 10px 0 #f8bbd0; flex-grow: 1; min-height: 300px;
+        }
+
+        /* FLECHAS DE NAVEGACIÓN */
+        .btn-flecha {
+            background: #e91e63; color: white; border: none; width: 60px; height: 60px;
+            border-radius: 50%; cursor: pointer; font-size: 2rem; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 6px 0 #ad1457;
+            transition: 0.2s; flex-shrink: 0;
+        }
+        .btn-flecha:hover { background: #ad1457; transform: scale(1.1); }
+        .btn-flecha:active { transform: translateY(4px); box-shadow: none; }
+
+        .visor-img {
+            width: 320px; height: 240px; background: #f9f9f9; border-radius: 25px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #eee;
+        }
+        .visor-img img { max-width: 95%; max-height: 95%; object-fit: contain; }
+
+        .visor-info { text-align: left; min-width: 350px; display: flex; flex-direction: column; gap: 10px; }
+        
+        .fila-idioma { display: flex; align-items: center; gap: 15px; }
+        .nombre-es { font-size: 2.8rem; color: #ad1457; margin: 0; text-transform: uppercase; font-weight: 600; }
+        .nombre-en { font-size: 1.8rem; color: #1e88e5; margin: 0; font-weight: 600; }
+
+        .btn-voz {
+            background: white; border: 3px solid #ddd; width: 50px; height: 50px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem; transition: 0.2s; box-shadow: 0 4px 0 #eee;
+        }
+        .btn-voz:hover { transform: scale(1.1); border-color: #ad1457; }
+        .btn-voz.en:hover { border-color: #1e88e5; }
+
+        .btn-sonido-mp3 { 
+            background: #9c27b0; color: white; border: none; padding: 12px 25px; 
+            border-radius: 50px; cursor: pointer; font-size: 1.2rem; font-weight: bold; 
+            box-shadow: 0 6px 0 #7b1fa2; transition: 0.2s; margin-top: 10px; width: fit-content;
+        }
+
+        /* BIBLIOTECA INFERIOR */
+        .biblioteca { background: rgba(255, 255, 255, 0.5); border-radius: 30px; padding: 15px; overflow-y: auto; flex-grow: 1; width: 95%; margin: 0 auto; }
+        .grid-miniaturas { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .miniatura { background: white; border: 3px solid #eee; border-radius: 20px; padding: 10px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
+        .miniatura.active { border-color: #e91e63; background: #fce4ec; }
+        .miniatura-img { width: 100%; height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
+        .miniatura-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .miniatura span { font-size: 0.8rem; font-weight: bold; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+
+        .biblioteca::-webkit-scrollbar { width: 10px; }
+        .biblioteca::-webkit-scrollbar-thumb { background: #e91e63; border-radius: 10px; }
+    </style>
+</head>
+<body class="isla-tema bg-musica">
+
+    <div class="header-juego">
+        <a href="musica-menu.html" class="btn btn-volver">⬅ MENÚ MÚSICA</a>
+        <h1 style="color: #ad1457; margin:0; font-size: 1.8rem;">📖 Enciclopedia Mágica</h1>
+    </div>
+
+    <div class="main-container">
+        
+        <div class="visor-wrapper">
+            <!-- FLECHA IZQUIERDA -->
+            <button class="btn-flecha" onclick="navegar(-1)">⬅</button>
+
+            <!-- VISOR CENTRAL -->
+            <div class="visor-instrumento" id="visor">
+                <div class="visor-img">
+                    <img id="main-img" src="" alt="Cargando...">
+                </div>
+                <div class="visor-info">
+                    <div class="fila-idioma">
+                        <h2 id="main-name-es" class="nombre-es">---</h2>
+                        <button id="btn-hablar-es" class="btn-voz">🔊</button>
+                    </div>
+                    <div class="fila-idioma">
+                        <p id="main-name-en" class="nombre-en">🇬🇧 ---</p>
+                        <button id="btn-hablar-en" class="btn-voz en">🔊</button>
+                    </div>
+                    <button id="main-audio-btn" class="btn-sonido-mp3">🎵 ESCUCHAR SONIDO</button>
+                </div>
+            </div>
+
+            <!-- FLECHA DERECHA -->
+            <button class="btn-flecha" onclick="navegar(1)">➡</button>
+        </div>
+
+        <!-- BIBLIOTECA INFERIOR -->
+        <div class="biblioteca">
+            <div id="grid" class="grid-miniaturas"></div>
+        </div>
+    </div>
+
+    <script>
+        let audioMp3 = new Audio();
+        let indiceActual = 0;
+
+        function decir(texto, idioma) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(texto);
+            msg.lang = idioma;
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        }
+
+        function cargarEnciclopedia() {
+            const grid = document.getElementById('grid');
+            GLOSARIO_INSTRUMENTOS.forEach((ins, index) => {
+                const div = document.createElement('div');
+                div.className = "miniatura";
+                div.id = "min-" + index;
+                div.innerHTML = `
+                    <div class="miniatura-img"><img src="Instrumentos/${ins.f}"></div>
+                    <span>${ins.n.replace('El ', '').replace('La ', '').replace('Los ', '').replace('Las ', '')}</span>
+                `;
+                div.onclick = () => seleccionar(index);
+                grid.appendChild(div);
+            });
+
+            // Iniciar con instrumento aleatorio
+            indiceActual = Math.floor(Math.random() * GLOSARIO_INSTRUMENTOS.length);
+            seleccionar(indiceActual);
+        }
+
+        function seleccionar(index) {
+            indiceActual = index;
+            const ins = GLOSARIO_INSTRUMENTOS[indiceActual];
+            
+            // UI Miniaturas
+            document.querySelectorAll('.miniatura').forEach(m => m.classList.remove('active'));
+            const minActiva = document.getElementById('min-' + indiceActual);
+            if (minActiva) {
+                minActiva.classList.add('active');
+                minActiva.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Actualizar Contenido
+            document.getElementById('main-img').src = "Instrumentos/" + ins.f;
+            document.getElementById('main-name-es').innerText = ins.n;
+            document.getElementById('main-name-en').innerText = `🇬🇧 ${ins.en}`;
+            
+            // Botones de Voz
+            document.getElementById('btn-hablar-es').onclick = () => decir(ins.n, 'es-ES');
+            document.getElementById('btn-hablar-en').onclick = () => decir(ins.en, 'en-GB');
+            
+            // Audio MP3
+            const btnMp3 = document.getElementById('main-audio-btn');
+            if (ins.s !== "") {
+                btnMp3.style.visibility = "visible";
+                btnMp3.onclick = () => { audioMp3.src = "sonidos/" + ins.s; audioMp3.play(); };
+            } else {
+                btnMp3.style.visibility = "hidden";
+            }
+
+            // LOCUCIÓN AUTOMÁTICA EN ESPAÑOL
+            decir(ins.n, 'es-ES');
+        }
+
+        function navegar(dir) {
+            indiceActual += dir;
+            if (indiceActual < 0) indiceActual = GLOSARIO_INSTRUMENTOS.length - 1;
+            if (indiceActual >= GLOSARIO_INSTRUMENTOS.length) indiceActual = 0;
+            seleccionar(indiceActual);
+        }
+
+        window.onload = cargarEnciclopedia;
+    </script>
+</body>
+</html>

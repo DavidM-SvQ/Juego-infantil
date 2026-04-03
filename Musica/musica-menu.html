@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Isla de la Música 🎵</title>
+    <link rel="icon" type="image/png" href="../icono.png">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body { margin: 0; font-family: 'Fredoka', sans-serif; text-align: center; }
+        .header-juego { background: white; padding: 15px; display: flex; justify-content: space-around; align-items: center; border-bottom: 6px solid #e91e63; }
+        .btn-volver { background: #546e7a; color: white !important; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 0 #37474f; }
+        .grid-musica { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px 20px; max-width: 1000px; margin: 0 auto; }
+        .card-musica { background: white; border-radius: 40px; padding: 25px; width: 280px; height: 200px; text-decoration: none; color: #880e4f; border: 6px solid #e91e63; box-shadow: 0 12px 0 #f8bbd0; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .card-musica:hover { transform: translateY(-10px); }
+        .card-musica span { font-size: 4rem; display: block; margin-bottom: 10px; }
+        .card-musica h2 { margin: 0; font-size: 1.5rem; }
+    </style>
+</head>
+<body class="isla-tema bg-musica">
+    <div class="header-juego">
+        <a href="../index.html" class="btn btn-volver">⬅ MAPA PRINCIPAL</a>
+        <h1 style="color: #ad1457; margin: 0; font-size: 2.2rem;">🎵 Isla de la Música</h1>
+    </div>
+    <h2 style="font-size: 2rem; color: #ad1457; margin-top: 30px;">¿Qué quieres descubrir hoy?</h2>
+    <div class="grid-musica">
+        <!-- 1. ENCICLOPEDIA -->
+        <a href="musica-instrumentos.html" class="card-musica">
+            <span>📖</span>
+            <h2>Enciclopedia</h2>
+        </a>
+        <!-- 2. ADIVINA IMAGEN -->
+        <a href="musica-adivina-imagen.html" class="card-musica" style="border-color: #4CAF50; box-shadow: 0 12px 0 #C8E6C9;">
+            <span>📸</span>
+            <h2>¿Dónde está?</h2>
+        </a>
+        <!-- 3. ADIVINA SONIDO -->
+        <a href="musica-adivina-sonidos.html" class="card-musica" style="border-color: #9c27b0; box-shadow: 0 12px 0 #e1bee7;">
+            <span>👂</span>
+            <h2>¿Quién suena?</h2>
+        </a>
+    </div>
+</body>
+</html>
