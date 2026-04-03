@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Tu Diploma Especial! 🎓</title>
+    <style>
+        body { background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Quicksand', sans-serif; }
+        .diploma {
+            width: 800px; height: 550px; background: white; border: 15px double #333;
+            padding: 40px; position: relative; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+        h1 { font-size: 3.5rem; margin-bottom: 0; }
+        .nombre { font-size: 3rem; color: #2196f3; font-weight: bold; margin: 20px 0; }
+        p { font-size: 1.4rem; color: #555; }
+        .avatar { font-size: 6rem; margin: 15px 0; }
+        .medalla { font-size: 5rem; position: absolute; bottom: 30px; right: 40px; transform: rotate(-15deg); }
+        .estrellas-info { font-size: 2rem; font-weight: bold; color: #ff8f00; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="diploma" id="marco">
+        <h1 id="titulo">DIPLOMA DE APRENDIZAJE</h1>
+        <p>Este diploma se otorga con gran orgullo a:</p>
+        <div class="nombre" id="nombre-diploma"></div>
+        <p id="mensaje">¡Por ser una gran exploradora!</p>
+        <div class="estrellas-info"><span id="cant-estrellas">0</span> ESTRELLAS ⭐</div>
+        <div class="avatar" id="avatar-diploma"></div>
+        <div class="medalla" id="medalla">🏅</div>
+        
+        <button class="no-print" onclick="window.print()" style="margin-top:20px; padding:10px 20px; background:#4caf50; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">🖨️ Guardar o Imprimir</button>
+        <br>
+        <a href="index.html" class="no-print" style="display:inline-block; margin-top:10px; color:#546e7a;">Volver al Mapa</a>
+    </div>
+
+    <script>
+        window.onload = () => {
+            const estrellas = parseInt(localStorage.getItem('user_estrellas')) || 0;
+            const nombre = localStorage.getItem('user_nombre');
+            const avatar = localStorage.getItem('user_avatar');
+
+            document.getElementById('nombre-diploma').innerText = nombre;
+            document.getElementById('avatar-diploma').innerText = avatar;
+            document.getElementById('cant-estrellas').innerText = estrellas;
+
+            const marco = document.getElementById('marco');
+            const titulo = document.getElementById('titulo');
+            const mensaje = document.getElementById('mensaje');
+            const medalla = document.getElementById('medalla');
+
+            if (estrellas >= 1000) {
+                marco.style.borderColor = "#ffd700";
+                titulo.innerText = "👑 DIPLOMA DE LEYENDA";
+                titulo.style.color = "#b8860b";
+                mensaje.innerText = "¡Has completado casi todos los retos de la Isla! Eres una de las mentes más brillantes del mundo.";
+                medalla.innerText = "🏆";
+            } else if (estrellas >= 500) {
+                marco.style.borderColor = "#c0c0c0";
+                titulo.innerText = "🚀 DIPLOMA DE GENIA GALÁCTICA";
+                titulo.style.color = "#757575";
+                mensaje.innerText = "¡Increíble! Tu esfuerzo es gigante. Has descubierto muchísimos secretos de la Isla.";
+                medalla.innerText = "🥈";
+            } else {
+                marco.style.borderColor = "#cd7f32";
+                titulo.innerText = "⭐ DIPLOMA DE SUPER CAMPEONA";
+                titulo.style.color = "#8d6e63";
+                mensaje.innerText = "¡Enhorabuena! Has conseguido tus primeras 100 estrellas. ¡Sigue así, valiente!";
+                medalla.innerText = "🥇";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda de Premios 🎁</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="progreso.js"></script>
+    <style>
+        body { background: #fff9c4; font-family: 'Quicksand', sans-serif; text-align: center; }
+        .cabecera { background: white; padding: 20px; border-bottom: 6px solid #fbc02d; display: flex; justify-content: space-around; align-items: center; }
+        .grid-tienda { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px; }
+        .item-tienda { 
+            background: white; border: 5px solid #ddd; border-radius: 30px; 
+            padding: 20px; width: 150px; transition: 0.3s; position: relative;
+        }
+        .item-tienda.comprado { border-color: #4caf50; background: #e8f5e9; }
+        .emoji-grande { font-size: 4rem; display: block; margin-bottom: 10px; }
+        .precio { background: #ffc107; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .btn-comprar { 
+            margin-top: 15px; padding: 10px 20px; border-radius: 20px; border: none; 
+            background: #2196f3; color: white; cursor: pointer; font-weight: bold; 
+        }
+        .btn-comprar:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="cabecera">
+        <a href="index.html" class="btn-volver" style="background:#546e7a; color:white; padding:10px 20px; border-radius:20px; text-decoration:none;">⬅ VOLVER AL MAPA</a>
+        <h2 id="mis-estrellas" style="font-size: 2rem; color: #f57f17;">⭐ Estrellas: 0</h2>
+    </div>
+
+    <h1>🎁 Tienda de Personajes Mágicos</h1>
+    <p>¡Gasta tus estrellas para desbloquear nuevos amigos!</p>
+
+    <div id="tienda" class="grid-tienda"></div>
+
+    <script>
+        const premios = [
+            {e: '🦄', p: 100}, {e: '🐉', p: 200}, {e: '🧜‍♀️', p: 300}, 
+            {e: '🚀', p: 400}, {e: '🐼', p: 500}, {e: '🌈', p: 600}
+        ];
+
+        function renderTienda() {
+            const total = localStorage.getItem('user_estrellas') || 0;
+            document.getElementById('mis-estrellas').innerText = "⭐ Estrellas: " + total;
+            
+            const divTienda = document.getElementById('tienda');
+            divTienda.innerHTML = "";
+            const comprados = obtenerDesbloqueados();
+
+            premios.forEach(item => {
+                const esComprado = comprados.includes(item.e);
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `item-tienda ${esComprado ? 'comprado' : ''}`;
+                
+                itemDiv.innerHTML = `
+                    <span class="emoji-grande">${item.e}</span>
+                    <span class="precio">${esComprado ? 'ADQUIRIDO' : item.p + ' ⭐'}</span>
+                    <button class="btn-comprar" 
+                        ${esComprado || total < item.p ? 'disabled' : ''} 
+                        onclick="comprar('${item.e}', ${item.p})">
+                        ${esComprado ? '✅' : 'COMPRAR'}
+                    </button>
+                `;
+                divTienda.appendChild(itemDiv);
+            });
+        }
+
+        function comprar(emoji, precio) {
+            if (gastarEstrellas(precio)) {
+                desbloquearPremio(emoji);
+                sonarGanar();
+                renderTienda();
+            }
+        }
+
+        window.onload = renderTienda;
+    </script>
+</body>
+</html>
