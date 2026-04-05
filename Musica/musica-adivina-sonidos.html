@@ -80,7 +80,7 @@
     <script>
         let correcto = null; let audioActual = new Audio();
         function decir(t, lang) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = lang; window.speechSynthesis.speak(m); }
-        function reproducirSonido() { if(!correcto) return; audioActual.src = "sonidos/" + correcto.s; audioActual.play(); document.getElementById('playBtn').classList.add('sonando'); audioActual.onended = () => document.getElementById('playBtn').classList.remove('sonando'); }
+        function reproducirSonido() { if(!correcto) return; audioActual.src = "Sonidos/" + correcto.s; audioActual.play(); document.getElementById('playBtn').classList.add('sonando'); audioActual.onended = () => document.getElementById('playBtn').classList.remove('sonando'); }
         
         function nuevoReto() {
             document.getElementById('celebracion').style.display = 'none';
