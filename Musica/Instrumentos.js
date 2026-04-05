@@ -2,7 +2,6 @@ const GLOSARIO_INSTRUMENTOS = [
 	{ n: "El Acordeón", en: "Accordion", f: "acordeon.jpg", s: "acordeon.wav" },
 	{ n: "La Armónica", en: "Harmonica", f: "armonica.jpg", s: "armonica.wav" },
 	{ n: "El Arpa", en: "Harp", f: "arpa.jpg", s: "" },
-	{ n: "El Bajo", en: "Bass", f: "bajo.jpg", s: "" },
 	{ n: "El Banjo", en: "Banjo", f: "banjo.jpg", s: "" },
 	{ n: "La Batería", en: "Drums", f: "bateria.jpg", s: "" },
 	{ n: "La Bocina", en: "Motor horn", f: "bocina.jpg", s: "bocina.mp3" },
